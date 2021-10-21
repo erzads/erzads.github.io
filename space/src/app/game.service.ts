@@ -32,11 +32,14 @@ export class GameService {
 
   loop(elapsedTime: number) {
     const asteroids = this.asteroidService.generateAsteroids();
-    if (asteroids) {
+    if (asteroids?.length > 0) {
       this.logService.logInfo("ASTEROID", "Incoming asteroids...");
       const hitAsteroids = this.weaponService.shoot(asteroids);
       if (hitAsteroids) {
-        const materials = this.asteroidService.generateMaterials(hitAsteroids);
+        const materialsYield = this.asteroidService.generateMaterialsYield(hitAsteroids);
+        if (materialsYield) {
+          this.storageService.add(materialsYield);
+        }
       }
     }
     this.storageService.cap();
