@@ -1,17 +1,15 @@
 <div fxFlexFill fxLayout="column">
   <div class="content" fxLayout="row" fxLayout.xs="column" fxFlexFill>
-
-		<div fxFlex="15" fxFlex.xs="20" fxLayout="row">
-      
-        <div *ngFor="let material of materials$ | async | keyvalue">{{ material.key.name }} - {{ material.value }}</div>
-        
-		</div>
-		<div fxFlex="30" fxFlex.xs="60">
-			second-section
-		</div>
-		<div fxFlex="55" fxFlex.xs="20">
-			<div *ngFor="let log of logs$ | async">{{ log.type }} - {{ log.message }}</div>
-		</div>
-
-	</div>
+    <mat-card class="mat-elevation-z4" fxFlex="20" fxFlex.xs="20" fxLayout="row">
+      <div *ngFor="let material of materials$ | async | keyvalue">
+        {{ material.key.name }} - {{ material.value }}
+      </div>
+    </mat-card>
+    <div fxFlex="60" fxFlex.xs="60"> second-section </div>
+    <mat-card class="mat-elevation-z4" id="logs" fxFlex="20" fxFlex.xs="20">
+      <div *ngFor="let log of logs$ | async">
+        {{ log.type }} - {{ log.message }}
+      </div>
+    </mat-card>
+  </div>
 </div>

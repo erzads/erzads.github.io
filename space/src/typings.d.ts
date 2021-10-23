@@ -11,3 +11,9 @@ interface Material {
   description:string;
   type: "A" | "B"
 }
+
+interface Equipment {
+  id: string;
+  name:string;
+  description:string;
+}

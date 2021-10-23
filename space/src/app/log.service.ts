@@ -11,31 +11,37 @@ export class LogService {
   constructor() {}
 
   logSuccess(source: string, message: string) {
-    this._logs.value.push({
+    this.addLog({
       source: source,
       message: message,
       type: "SUCCESS",
     });
-    this._logs.next(this._cap(this._logs.value));
   }
 
   logInfo(source: string, message: string) {
-    this._logs.value.push({ source: source, message: message, type: "INFO" });
-    this._logs.next(this._cap(this._logs.value));
+    this.addLog({
+      source: source,
+      message: message,
+      type: "INFO",
+    });
   }
 
   logFailure(source: string, message: string) {
-    this._logs.value.push({
+    this.addLog({
       source: source,
       message: message,
       type: "FAILURE",
     });
-    this._logs.next(this._cap(this._logs.value));
   }
 
-  _cap(logs:Log[]){
+  private addLog(log: Log) {
+    this._logs.value.unshift(log);
+    this._logs.next(this.cap(this._logs.value));
+  }
+
+  private cap(logs: Log[]) {
     if (logs.length > this.MAX_LOGS) {
-      return logs.slice(logs.length - this.MAX_LOGS, logs.length);
+      return logs.slice(0, this.MAX_LOGS);
     }
     return logs;
   }

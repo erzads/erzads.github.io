@@ -4,6 +4,7 @@ import { AsteroidService } from "./asteroid.service";
 import { LogService } from "./log.service";
 import { ModuleService } from "./module.service";
 import { StorageService } from "./storage.service";
+import { TravelService } from "./travel.service";
 import { WeaponService } from "./weapon.service";
 
 @Injectable({
@@ -12,11 +13,14 @@ import { WeaponService } from "./weapon.service";
 export class GameService {
   subscription: Subscription | null = null;
 
+  private distance = 0;
+
   constructor(
     private storageService: StorageService,
     private moduleService: ModuleService,
     private asteroidService: AsteroidService,
     private weaponService: WeaponService,
+    private travelService: TravelService,
     private logService: LogService
   ) {}
 
@@ -31,18 +35,24 @@ export class GameService {
   }
 
   loop(elapsedTime: number) {
-    const asteroids = this.asteroidService.generateAsteroids();
-    if (asteroids?.length > 0) {
-      this.logService.logInfo("ASTEROID", "Incoming asteroids...");
-      const hitAsteroids = this.weaponService.shoot(asteroids);
-      if (hitAsteroids) {
-        const materialsYield = this.asteroidService.generateMaterialsYield(hitAsteroids);
-        if (materialsYield) {
-          this.storageService.add(materialsYield);
+    while (elapsedTime > 999) {
+      elapsedTime =- 1000; // one game loop every second
+
+      this.distance += this.travelService.calculateTravelDistance();
+      const asteroids = this.asteroidService.generateAsteroids();
+      if (asteroids?.length > 0) {
+        this.logService.logInfo("ASTEROID", "Incoming asteroids...");
+        const hitAsteroids = this.weaponService.shoot(asteroids);
+        if (hitAsteroids) {
+          const materialsYield =
+            this.asteroidService.generateMaterialsYield(hitAsteroids);
+          if (materialsYield) {
+            this.storageService.add(materialsYield);
+          }
         }
       }
+      this.storageService.cap();
     }
-    this.storageService.cap();
   }
 
   destroy() {

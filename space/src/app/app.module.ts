@@ -1,20 +1,20 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
-import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppComponent } from "./app.component";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MatCardModule } from "@angular/material/card";
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     FlexLayoutModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatCardModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

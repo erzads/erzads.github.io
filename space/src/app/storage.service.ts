@@ -1,26 +1,14 @@
-import { EventEmitter, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { MaterialService } from "./material.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class StorageService {
-  
   private _materials: BehaviorSubject<Map<Material, number>> =
     new BehaviorSubject<Map<Material, number>>(new Map<Material, number>());
 
-  constructor(private materialService: MaterialService) {
-    //teste
-    const materialA = this.materialService.materials.get("A");
-    const materialB = this.materialService.materials.get("B");
-    if (materialA) {
-      this._materials.value.set(materialA, 123);
-    }
-    if (materialB) {
-      this._materials.value.set(materialB, 456);
-    }
-    //teste fim
+  constructor() {
     this._materials.next(this._materials.value);
   }
 

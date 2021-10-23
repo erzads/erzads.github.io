@@ -18,4 +18,8 @@ export class ModuleService {
   generateMaterialYield() {
     return 1;
   }
+
+  getTravelDistanceModifier() {
+    return 1;
+  }
 }
