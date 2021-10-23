@@ -5,6 +5,7 @@ import { FlexLayoutModule } from "@angular/flex-layout";
 import { AppComponent } from "./app.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatCardModule } from "@angular/material/card";
+import { MatExpansionModule } from "@angular/material/expansion";
 
 @NgModule({
   declarations: [AppComponent],
@@ -13,6 +14,7 @@ import { MatCardModule } from "@angular/material/card";
     FlexLayoutModule,
     BrowserAnimationsModule,
     MatCardModule,
+    MatExpansionModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -13,7 +13,7 @@ import { WeaponService } from "./weapon.service";
 export class GameService {
   subscription: Subscription | null = null;
 
-  private distance = 0;
+  private _distance = 0;
 
   constructor(
     private storageService: StorageService,
@@ -36,9 +36,9 @@ export class GameService {
 
   loop(elapsedTime: number) {
     while (elapsedTime > 999) {
-      elapsedTime =- 1000; // one game loop every second
+      elapsedTime = -1000; // one game loop every second
 
-      this.distance += this.travelService.calculateTravelDistance();
+      this._distance += this.travelService.calculateTravelDistance();
       const asteroids = this.asteroidService.generateAsteroids();
       if (asteroids?.length > 0) {
         this.logService.logInfo("ASTEROID", "Incoming asteroids...");
@@ -53,6 +53,10 @@ export class GameService {
       }
       this.storageService.cap();
     }
+  }
+
+  get distance() {
+    return this._distance;
   }
 
   destroy() {
