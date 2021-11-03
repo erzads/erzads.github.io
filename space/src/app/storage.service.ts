@@ -26,7 +26,18 @@ export class StorageService {
     this._materials.next(this._materials.value);
   }
 
-  get materials() {
+  remove(materials: Map<Material, number>) {
+    materials.forEach((value, key) => {
+      const materialsMap = this._materials.getValue();
+      let materialQuantity = materialsMap.get(key);
+      if (materialQuantity == null) {
+        materialQuantity = value;
+      }
+      materialsMap.set(key, materialQuantity - value);
+    });
+  }
+
+  get materials(): BehaviorSubject<Map<Material, number>> {
     return this._materials;
   }
 

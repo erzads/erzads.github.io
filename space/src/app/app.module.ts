@@ -6,6 +6,7 @@ import { AppComponent } from "./app.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { MatCardModule } from "@angular/material/card";
 import { MatExpansionModule } from "@angular/material/expansion";
+import { MatButtonModule } from "@angular/material/button";
 
 @NgModule({
   declarations: [AppComponent],
@@ -15,6 +16,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
     BrowserAnimationsModule,
     MatCardModule,
     MatExpansionModule,
+    MatButtonModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

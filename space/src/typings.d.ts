@@ -9,7 +9,7 @@ interface Log {
 interface Material {
   name:string;
   description:string;
-  type: "A" | "B"
+  type: "A" | "B" | "C"
 }
 
 interface Equipment {

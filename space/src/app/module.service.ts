@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ModuleService {
+  constructor() {}
 
-  constructor() { }
-
-  getAsteroidQuantityModifier() {
+  getAsteroidQuantityModifier(): number {
     return 0;
   }
 
@@ -15,11 +14,11 @@ export class ModuleService {
     return "A";
   }
 
-  generateMaterialYield() {
-    return 1;
+  generateMaterialYield(): number {
+    return 99;
   }
 
-  getTravelDistanceModifier() {
+  getTravelDistanceModifier(): number {
     return 1;
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ModuleService } from "./module.service";
+import { ModifierService } from "./modifier.service";
 
 @Injectable({
   providedIn: "root",
@@ -7,9 +7,9 @@ import { ModuleService } from "./module.service";
 export class TravelService {
   private BASE_DISTANCE = 1;
 
-  constructor(private moduleService: ModuleService) {}
+  constructor(private modifierService: ModifierService) {}
 
   public calculateTravelDistance(): number {
-    return this.BASE_DISTANCE * this.moduleService.getTravelDistanceModifier();
+    return this.BASE_DISTANCE * this.modifierService.getTravelDistanceModifier();
   }
 }
