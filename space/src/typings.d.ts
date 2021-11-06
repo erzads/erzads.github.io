@@ -12,10 +12,11 @@ interface Material {
   type: "A" | "B" | "C"
 }
 
-interface Equipment {
+interface Buyable {
   id: string;
   name:string;
   description:string;
+  effects: string[];
   quantity: number;
   baseCost: Map<Material, number>;
 }

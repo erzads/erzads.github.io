@@ -5,6 +5,8 @@ import { GameService } from "./game.service";
 import { LogService } from "./log.service";
 import { StorageService } from "./storage.service";
 import { finalize, first, map } from "rxjs/operators";
+import { KeyValue } from "@angular/common";
+import { ModuleService } from "./module.service";
 
 @Component({
   selector: "app-root",
@@ -18,6 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private gameService: GameService,
     private storageService: StorageService,
     private equipmentService: EquipmentService,
+    private moduleService: ModuleService,
     private logService: LogService
   ) {}
 
@@ -37,34 +40,45 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.equipmentService.equipments;
   }
 
-  getEquipmentCosts(id: string): Map<Material, number> {
-    return this.equipmentService.getEquipmentCosts(id);
+  get modules() {
+    return this.moduleService.modules;
   }
 
-  ngOnInit() {
-    this.gameService.start();
+  getCosts(type: "MODULE" | "EQUIPMENT", id: string): Map<Material, number> {
+    if (type === "MODULE") {
+      return this.moduleService.getModuleCosts(id);
+    } else if (type === "EQUIPMENT") {
+      return this.equipmentService.getEquipmentCosts(id);
+    } else {
+      throw "Unexpected type: " + type;
+    }
   }
 
-  ngOnDestroy() {
-    this.gameService.destroy();
-  }
-
-  buyEquipment(id: string) {
+  buy(type: "MODULE" | "EQUIPMENT", id: string) {
     if (!this._isBuying) {
       this._isBuying = true;
-      this.canBuyEquipment$(id)
-        .pipe(first(), finalize(() => (this._isBuying = false)))
-        .subscribe(canBuy => {
+      this.canBuy$(type, id)
+        .pipe(
+          first(),
+          finalize(() => (this._isBuying = false))
+        )
+        .subscribe((canBuy) => {
           if (canBuy) {
-            this.storageService.remove(this.getEquipmentCosts(id));
-            this.equipmentService.add(id, 1)
+            this.storageService.remove(this.getCosts(type, id));
+            if (type === "MODULE") {
+              this.moduleService.add(id, 1);
+            } else if (type === "EQUIPMENT") {
+              this.equipmentService.add(id, 1);
+            } else {
+              throw "Unexpected type: " + type;
+            }
           }
         });
     }
   }
 
-  canBuyEquipment$(id: string) {
-    const costs = this.getEquipmentCosts(id);
+  canBuy$(type: "MODULE" | "EQUIPMENT", id: string) {
+    const costs = this.getCosts(type, id);
     return this.materials$.pipe(
       map((materialStorage: Map<Material, number>) => {
         for (let material of costs.keys()) {
@@ -76,5 +90,20 @@ export class AppComponent implements OnInit, OnDestroy {
         return true;
       })
     );
+  }
+
+  keyAscOrder = (
+    a: KeyValue<Material, number>,
+    b: KeyValue<Material, number>
+  ): number => {
+    return a.key.type.localeCompare(b.key.type);
+  };
+
+  ngOnInit() {
+    this.gameService.start();
+  }
+
+  ngOnDestroy() {
+    this.gameService.destroy();
   }
 }

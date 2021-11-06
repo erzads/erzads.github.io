@@ -1,13 +1,17 @@
 import { Injectable } from "@angular/core";
+import { BuyableService } from "./buyable.service";
 import { MaterialService } from "./material.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class EquipmentService {
-  private _equipments: Map<string, Equipment> = new Map<string, Equipment>();
+  private _equipments: Map<string, Buyable> = new Map<string, Buyable>();
 
-  constructor(private materialService: MaterialService) {
+  constructor(
+    materialService: MaterialService,
+    private buyableService: BuyableService
+  ) {
     const materialA = materialService.materials.get("A");
     const materialB = materialService.materials.get("B");
     const materialC = materialService.materials.get("C");
@@ -27,8 +31,10 @@ export class EquipmentService {
     this._equipments.set("A", {
       id: "A",
       name: "Weaponry",
-      description:
-        "Laser firing cannons. Increases the amount of material extracted from asteroids by 5%.",
+      description: "Laser firing cannons.",
+      effects: [
+        "Asteroid material yield: +5%",
+      ],
       quantity: 0,
       baseCost: equipABaseCost,
     });
@@ -36,7 +42,8 @@ export class EquipmentService {
     this._equipments.set("B", {
       id: "B",
       name: "Thrusters",
-      description: "Rocket thrusters. Increases travel speed.",
+      description: "Rocket thrusters.",
+      effects: ["Travel speed: +?"],
       quantity: 0,
       baseCost: equipBBaseCost,
     });
@@ -45,38 +52,32 @@ export class EquipmentService {
       id: "C",
       name: "Storage",
       description: "Increases material storage capacity.",
+      effects: ["ble"],
       quantity: 0,
       baseCost: equipCBaseCost,
     });
-  }
-
-  getEquipmentCosts(id: string): Map<Material, number> {
-    const equipment = this._equipments.get(id);
-    const baseCost = equipment!.baseCost;
-    const quantity = equipment!.quantity;
-    const cost = new Map<Material, number>(baseCost);
-    if (quantity > 0) {
-      baseCost.forEach((v, k) => {
-        cost.set(k, v * (1.15 ** quantity));
-      });
-    }
-    return cost;
   }
 
   get equipments() {
     return this._equipments;
   }
 
+  getEquipmentCosts(id: string): Map<Material, number> {
+    return this.buyableService.getCosts(id, this._equipments);
+  }
+
   getAsteroidQuantityModifier(): number {
     return 0;
   }
 
-  getRandomMaterialType() {
-    return "A";
-  }
-
   generateMaterialYield(): number {
-    return 1;
+    const weapons = this._equipments.get("A");
+    const quantity = weapons!.quantity;
+    if (quantity > 0) {
+      return 1 + quantity * 0.05;
+    } else {
+      return 1;
+    }
   }
 
   getTravelDistanceModifier(): number {

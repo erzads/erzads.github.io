@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { MaterialService } from "./material.service";
-import { ModuleService } from "./module.service";
+import { ModifierService } from "./modifier.service";
 
 @Injectable({
   providedIn: "root",
@@ -8,17 +8,18 @@ import { ModuleService } from "./module.service";
 export class AsteroidService {
   private BASE_CHANCE = 0.1;
   private BASE_QUANTITY = 0.1;
+  private BASE_MATERIAL_YIELD = 1;
 
   constructor(
-    private moduleService: ModuleService,
+    private modifierService: ModifierService,
     private materialService: MaterialService
   ) {}
 
   generateAsteroids(): Asteroid[] {
     const asteroids: Asteroid[] = [];
-    if (Math.random() <= this.BASE_CHANCE) {
+    if (Math.random() <= this.BASE_CHANCE * this.modifierService.getAsteroidChanceModifier()) {
       const asteroidQuantity =
-        this.BASE_QUANTITY + this.moduleService.getAsteroidQuantityModifier();
+        this.BASE_QUANTITY + this.modifierService.getAsteroidQuantityModifier();
       for (let i = 0; i < asteroidQuantity; i++) {
         asteroids.push({});
       }
@@ -29,9 +30,9 @@ export class AsteroidService {
   generateMaterialsYield(asteroids: Asteroid[]): Map<Material, number> {
     const materialsYield = new Map<Material, number>();
     asteroids.forEach(asteroid => {
-      const material = this.materialService.materials.get(this.moduleService.getRandomMaterialType());
+      const material = this.materialService.materials.get(this.modifierService.getRandomMaterialType());
       if (material) {
-        const materialYield = this.moduleService.generateMaterialYield();
+        const materialYield = this.BASE_MATERIAL_YIELD * this.modifierService.generateMaterialYield();
         if (materialsYield.has(material)){
           materialsYield.set(material, (materialsYield.get(material) || 0) + materialYield);
         } else {

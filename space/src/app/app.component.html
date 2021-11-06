@@ -1,41 +1,52 @@
 <div fxFlexFill fxLayout="column">
   <div class="content" fxLayout="row" fxLayout.xs="column" fxFlexFill>
     <mat-card class="mat-elevation-z4" fxFlex="20" fxFlex.xs="20">
-      <p>Distance traveled: {{ distance }}</p>
-      <mat-card-content fxLayout="row">
-        <div *ngFor="let material of materials$ | async | keyvalue">
-          {{ material.key.name }} - {{ material.value }}
+      <p>Travelled distance: {{ distance | number: "1.2-2" }}</p>
+      <mat-card-content fxLayout="column">
+        <div
+          *ngFor="let material of materials$ | async | keyvalue: keyAscOrder"
+        >
+          {{ material.key.name }} - {{ material.value | number: "1.2-2" }}
         </div>
       </mat-card-content>
     </mat-card>
 
-    <div id="buyables" fxFlex="60" fxFlex.xs="60" fxLayout="row">
+    <div
+      id="buyables"
+      fxFlex="60"
+      fxFlex.xs="60"
+      fxLayout="row"
+      fxLayoutGap="5px"
+    >
       <div fxFlex="50">
         <mat-accordion multi>
           <mat-expansion-panel *ngFor="let equipment of equipments | keyvalue">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                {{ equipment.value.name }}
+                {{ equipment.value.name }} ({{ equipment.value.quantity }})
               </mat-panel-title>
-              <mat-panel-description>
-                {{ equipment.value.quantity }}
-              </mat-panel-description>
             </mat-expansion-panel-header>
             <p>{{ equipment.value.description }}</p>
+            <mat-divider></mat-divider>
+            <p class="accent-2 mat-caption clear-margin" *ngFor="let effect of equipment.value.effects">
+              {{ effect }}
+            </p>
+            <mat-divider></mat-divider>
             <p
+              class="accent"
               *ngFor="
-                let cost of getEquipmentCosts(equipment.value.id) | keyvalue
+                let cost of getCosts('EQUIPMENT', equipment.value.id) | keyvalue
               "
             >
-              {{ cost.key.name }}: {{ cost.value }}
+              {{ cost.key.name }}: {{ cost.value | number: "1.2-2" }}
             </p>
 
             <mat-action-row>
               <button
                 mat-button
                 color="primary"
-                [disabled]="!(canBuyEquipment$(equipment.value.id) | async)"
-                (click)="buyEquipment(equipment.value.id)"
+                [disabled]="!(canBuy$('EQUIPMENT', equipment.value.id) | async)"
+                (click)="buy('EQUIPMENT', equipment.value.id)"
               >
                 Buy
               </button>
@@ -46,23 +57,37 @@
 
       <div fxFlex="50">
         <mat-accordion multi>
-          <mat-expansion-panel *ngFor="let equipment of equipments | keyvalue">
+          <mat-expansion-panel *ngFor="let module of modules | keyvalue">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                {{ equipment.value.name }}
+                {{ module.value.name }} ({{ module.value.quantity }})
               </mat-panel-title>
-              <mat-panel-description>
-                {{ equipment.value.quantity }}
-              </mat-panel-description>
             </mat-expansion-panel-header>
-            <p>{{ equipment.value.description }}</p>
+            <p>{{ module.value.description }}</p>
+            <mat-divider></mat-divider>
+            <p class="accent-2 mat-caption clear-margin" *ngFor="let effect of module.value.effects">
+              {{ effect }}
+            </p>
+            <mat-divider></mat-divider>
             <p
+              class="accent"
               *ngFor="
-                let cost of getEquipmentCosts(equipment.value.id) | keyvalue
+                let cost of getCosts('MODULE', module.value.id) | keyvalue
               "
             >
-              {{ cost.key.name }}: {{ cost.value }}
+              {{ cost.key.name }}: {{ cost.value | number: "1.2-2" }}
             </p>
+
+            <mat-action-row>
+              <button
+                mat-button
+                color="primary"
+                [disabled]="!(canBuy$('MODULE', module.value.id) | async)"
+                (click)="buy('MODULE', module.value.id)"
+              >
+                Buy
+              </button>
+            </mat-action-row>
           </mat-expansion-panel>
         </mat-accordion>
       </div>

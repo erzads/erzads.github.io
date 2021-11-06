@@ -11,6 +11,10 @@ export class ModifierService {
     private equipmentService: EquipmentService
   ) {}
 
+  getAsteroidChanceModifier(): number {
+    return this.moduleService.getAsteroidChanceModifier();
+  }
+
   getAsteroidQuantityModifier(): number {
     return (
       this.equipmentService.getAsteroidQuantityModifier() +
@@ -18,13 +22,17 @@ export class ModifierService {
     );
   }
 
+  getAsteroidHitModifier(): number {
+    return this.moduleService.getAsteroidHitModifier();
+  }
+
   getRandomMaterialType() {
-    return "A";
+    return this.moduleService.getRandomMaterialType();
   }
 
   generateMaterialYield(): number {
     return (
-      this.equipmentService.generateMaterialYield() +
+      this.equipmentService.generateMaterialYield() *
       this.moduleService.generateMaterialYield()
     );
   }

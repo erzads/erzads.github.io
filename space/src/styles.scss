@@ -1,0 +1,60 @@
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background-color: #323532;
+}
+
+.accent {
+  color: #d8e9a8;
+}
+
+.accent-2 {
+  color: #4e9f3d;
+}
+
+.clear-margin {
+  margin: 0!important;
+}
+
+.mat-card,
+.mat-expansion-panel,
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description,
+.mat-expansion-indicator::after,
+.mat-expansion-panel:not(.mat-expanded):not([aria-disabled="true"])
+  .mat-expansion-panel-header:hover {
+  background-color: #191a19;
+  color: #ffffff;
+}
+
+.mat-button.mat-primary.mat-button-disabled,
+.mat-button.mat-accent.mat-button-disabled,
+.mat-button.mat-warn.mat-button-disabled,
+.mat-button.mat-button-disabled.mat-button-disabled,
+.mat-icon-button.mat-primary.mat-button-disabled,
+.mat-icon-button.mat-accent.mat-button-disabled,
+.mat-icon-button.mat-warn.mat-button-disabled,
+.mat-icon-button.mat-button-disabled.mat-button-disabled,
+.mat-stroked-button.mat-primary.mat-button-disabled,
+.mat-stroked-button.mat-accent.mat-button-disabled,
+.mat-stroked-button.mat-warn.mat-button-disabled,
+.mat-stroked-button.mat-button-disabled.mat-button-disabled {
+  color: #a5a5a5;
+}
+
+.mat-button.mat-primary,
+.mat-icon-button.mat-primary,
+.mat-stroked-button.mat-primary {
+  color: #4e9f3d;
+}
+
+.mat-divider {
+  border-top-color: #424242;
+}
+
+.mat-expansion-panel-header {
+  padding: 0 12px !important;
+}
