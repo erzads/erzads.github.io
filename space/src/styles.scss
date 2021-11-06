@@ -16,7 +16,19 @@ body {
 }
 
 .clear-margin {
-  margin: 0!important;
+  margin: 0 !important;
+}
+
+.info {
+  color: #FFFFFF;
+}
+
+.success {
+  color: #4E9F3D;
+}
+
+.failure {
+  color: #8b8b8b;
 }
 
 .mat-card,

@@ -41,7 +41,10 @@ export class GameService {
       this._distance += this.travelService.calculateTravelDistance();
       const asteroids = this.asteroidService.generateAsteroids();
       if (asteroids?.length > 0) {
-        this.logService.logInfo("ASTEROID", "Incoming asteroids...");
+        this.logService.logInfo(
+          "ASTEROID",
+          "Incoming asteroids (" + asteroids?.length + ")"
+        );
         const hitAsteroids = this.weaponService.shoot(asteroids);
         if (hitAsteroids) {
           const materialsYield =

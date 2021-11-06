@@ -28,7 +28,10 @@
             </mat-expansion-panel-header>
             <p>{{ equipment.value.description }}</p>
             <mat-divider></mat-divider>
-            <p class="accent-2 mat-caption clear-margin" *ngFor="let effect of equipment.value.effects">
+            <p
+              class="accent-2 mat-caption clear-margin"
+              *ngFor="let effect of equipment.value.effects"
+            >
               {{ effect }}
             </p>
             <mat-divider></mat-divider>
@@ -65,7 +68,10 @@
             </mat-expansion-panel-header>
             <p>{{ module.value.description }}</p>
             <mat-divider></mat-divider>
-            <p class="accent-2 mat-caption clear-margin" *ngFor="let effect of module.value.effects">
+            <p
+              class="accent-2 mat-caption clear-margin"
+              *ngFor="let effect of module.value.effects"
+            >
               {{ effect }}
             </p>
             <mat-divider></mat-divider>
@@ -94,8 +100,15 @@
     </div>
 
     <mat-card class="mat-elevation-z4" id="logs" fxFlex="20" fxFlex.xs="20">
-      <div *ngFor="let log of logs$ | async">
-        {{ log.type }} - {{ log.message }}
+      <div
+        *ngFor="let log of logs$ | async"
+        [ngClass]="{
+          info: 'INFO' === log.type,
+          success: 'SUCCESS' === log.type,
+          failure: 'FAILURE' === log.type
+        }"
+      >
+        {{ log.message }}
       </div>
     </mat-card>
   </div>
