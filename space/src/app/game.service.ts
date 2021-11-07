@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { interval, Subscription } from "rxjs";
 import { AsteroidService } from "./asteroid.service";
 import { LogService } from "./log.service";
-import { ModuleService } from "./module.service";
+import { SaveStateService } from "./save-state.service";
 import { StorageService } from "./storage.service";
 import { TravelService } from "./travel.service";
 import { WeaponService } from "./weapon.service";
@@ -13,22 +13,27 @@ import { WeaponService } from "./weapon.service";
 export class GameService {
   subscription: Subscription | null = null;
 
+  private _loopCountBeforeSave = 0;
+
   private _distance = 0;
 
   constructor(
     private storageService: StorageService,
-    private moduleService: ModuleService,
     private asteroidService: AsteroidService,
     private weaponService: WeaponService,
     private travelService: TravelService,
+    private saveStateService: SaveStateService,
     private logService: LogService
   ) {}
 
   start() {
+    const savedGameState = this.saveStateService.loadGameState();
+    this._distance = savedGameState?.distance || this._distance;
+
     const source = interval(1000);
-    var lastLoopTime = new Date().getTime();
+    let lastLoopTime = savedGameState?.lastLoopTime || new Date().getTime();
     this.subscription = source.subscribe((val) => {
-      var now = new Date().getTime();
+      let now = new Date().getTime();
       this.loop(now - lastLoopTime);
       lastLoopTime = now;
     });
@@ -36,7 +41,15 @@ export class GameService {
 
   loop(elapsedTime: number) {
     while (elapsedTime > 999) {
-      elapsedTime = -1000; // one game loop every second
+      elapsedTime -= 1000; // one game loop every second
+
+      if (elapsedTime < 2000) {
+        this._loopCountBeforeSave++;
+      }
+      if (this._loopCountBeforeSave >= 30) {
+        this._loopCountBeforeSave = 0;
+        this.saveStateService.saveGameState(this._distance);
+      }
 
       this._distance += this.travelService.calculateTravelDistance();
       const asteroids = this.asteroidService.generateAsteroids();
