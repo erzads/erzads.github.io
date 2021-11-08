@@ -80,7 +80,6 @@ export class SaveStateService {
       modules: this._mapBuyableToQuantities(this.moduleService.modules),
     };
     localStorage.setItem("space-incremental", btoa(JSON.stringify(gameState)));
-    this.logService.logInfo("SYSTEM", "Game saved successfully");
   }
 
   private _mapBuyableToQuantities(
