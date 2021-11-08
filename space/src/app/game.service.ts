@@ -85,6 +85,10 @@ export class GameService {
     return this._distance;
   }
 
+  save() {
+    this._shouldSave = true;
+  }
+
   destroy() {
     this.subscription?.unsubscribe();
   }

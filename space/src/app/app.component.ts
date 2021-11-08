@@ -9,6 +9,10 @@ import { KeyValue } from "@angular/common";
 import { ModuleService } from "./module.service";
 import { WeaponService } from "./weapon.service";
 import { AsteroidService } from "./asteroid.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatDialog } from "@angular/material/dialog";
+import { ClearSavedDataDialogComponent } from "./dialogs/clear-saved-data-dialog/clear-saved-data-dialog.component";
+import { SaveStateService } from "./save-state.service";
 
 @Component({
   selector: "app-root",
@@ -25,6 +29,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private moduleService: ModuleService,
     private weaponService: WeaponService,
     private asteroidService: AsteroidService,
+    private saveStateService: SaveStateService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private logService: LogService
   ) {}
 
@@ -59,7 +66,7 @@ export class AppComponent implements OnInit, OnDestroy {
   get asteroidMaterialYield() {
     return this.asteroidService.asteroidMaterialYield;
   }
-  
+
   getCosts(type: "MODULE" | "EQUIPMENT", id: string): Map<Material, number> {
     if (type === "MODULE") {
       return this.moduleService.getModuleCosts(id);
@@ -114,6 +121,26 @@ export class AppComponent implements OnInit, OnDestroy {
   ): number => {
     return a.key.type.localeCompare(b.key.type);
   };
+
+  save() {
+    this.gameService.save();
+    this.snackBar.open('Game saved successfully', "Close", {
+      duration: 3000
+    });
+  }
+
+  openClearSavedDataDialog(){
+    const dialogRef = this.dialog.open(ClearSavedDataDialogComponent, {
+      width: '300px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.saveStateService.clear();
+        location.reload();
+      }
+    });
+  }
 
   ngOnInit() {
     this.gameService.start();

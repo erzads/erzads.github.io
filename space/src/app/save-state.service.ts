@@ -32,6 +32,10 @@ export class SaveStateService {
     }
   }
 
+  public clear() {
+    localStorage.removeItem("space-incremental");
+  }
+
   private _loadStorageMaterials(gameState: GameState) {
     if (gameState.storageMaterials && gameState.storageMaterials.length > 0) {
       const storageMaterials = gameState.storageMaterials
