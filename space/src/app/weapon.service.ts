@@ -8,12 +8,19 @@ import { ModifierService } from "./modifier.service";
 export class WeaponService {
   private BASE_CHANCE = 0.5;
 
-  constructor(private logService: LogService, private modifierService: ModifierService) {}
+  constructor(
+    private logService: LogService,
+    private modifierService: ModifierService
+  ) {}
+
+  get asteroidHitChance() {
+    return this.modifierService.getAsteroidHitModifier(this.BASE_CHANCE);
+  }
 
   shoot(asteroids: Asteroid[]): Asteroid[] {
     const hitAsteroids: Asteroid[] = [];
     asteroids.forEach((asteroid) => {
-      if (Math.random() <= this.BASE_CHANCE * this.modifierService.getAsteroidHitModifier()) {
+      if (Math.random() <= this.asteroidHitChance) {
         hitAsteroids.push(asteroid);
         this.logService.logSuccess("WEAPON", "Asteroid shot!");
       } else {

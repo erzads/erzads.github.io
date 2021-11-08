@@ -7,7 +7,7 @@ import { ModifierService } from "./modifier.service";
 })
 export class AsteroidService {
   private BASE_CHANCE = 0.1;
-  private BASE_QUANTITY = 0.1;
+  private BASE_ASTEROID_QUANTITY = 1;
   private BASE_MATERIAL_YIELD = 1;
 
   constructor(
@@ -15,12 +15,21 @@ export class AsteroidService {
     private materialService: MaterialService
   ) {}
 
+  get asteroidSpawnChance() {
+    return this.modifierService.getAsteroidChanceModifier(this.BASE_CHANCE);
+  }
+
+  get asteroidMaterialYield() {
+    return this.BASE_MATERIAL_YIELD * this.modifierService.generateMaterialYield();
+  }
+
   generateAsteroids(): Asteroid[] {
     const asteroids: Asteroid[] = [];
-    if (Math.random() <= this.BASE_CHANCE * this.modifierService.getAsteroidChanceModifier()) {
-      const asteroidQuantity =
-        this.BASE_QUANTITY + this.modifierService.getAsteroidQuantityModifier();
-      for (let i = 0; i < asteroidQuantity; i++) {
+    const asteroidQuantity =
+      this.BASE_ASTEROID_QUANTITY +
+      this.modifierService.getAsteroidQuantityModifier();
+    for (let i = 0; i < asteroidQuantity; i++) {
+      if (Math.random() <= this.asteroidSpawnChance) {
         asteroids.push({});
       }
     }
@@ -29,12 +38,17 @@ export class AsteroidService {
 
   generateMaterialsYield(asteroids: Asteroid[]): Map<Material, number> {
     const materialsYield = new Map<Material, number>();
-    asteroids.forEach(asteroid => {
-      const material = this.materialService.materials.get(this.modifierService.getRandomMaterialType());
+    asteroids.forEach((asteroid) => {
+      const material = this.materialService.materials.get(
+        this.modifierService.getRandomMaterialType()
+      );
       if (material) {
-        const materialYield = this.BASE_MATERIAL_YIELD * this.modifierService.generateMaterialYield();
-        if (materialsYield.has(material)){
-          materialsYield.set(material, (materialsYield.get(material) || 0) + materialYield);
+        const materialYield = this.asteroidMaterialYield;
+        if (materialsYield.has(material)) {
+          materialsYield.set(
+            material,
+            (materialsYield.get(material) || 0) + materialYield
+          );
         } else {
           materialsYield.set(material, materialYield);
         }

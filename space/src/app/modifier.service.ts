@@ -11,8 +11,8 @@ export class ModifierService {
     private equipmentService: EquipmentService
   ) {}
 
-  getAsteroidChanceModifier(): number {
-    return this.moduleService.getAsteroidChanceModifier();
+  getAsteroidChanceModifier(baseChance: number): number {
+    return this.moduleService.getAsteroidChanceModifier(baseChance);
   }
 
   getAsteroidQuantityModifier(): number {
@@ -22,8 +22,8 @@ export class ModifierService {
     );
   }
 
-  getAsteroidHitModifier(): number {
-    return this.moduleService.getAsteroidHitModifier();
+  getAsteroidHitModifier(baseChance: number): number {
+    return this.moduleService.getAsteroidHitModifier(baseChance);
   }
 
   getRandomMaterialType() {

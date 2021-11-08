@@ -7,6 +7,8 @@ import { StorageService } from "./storage.service";
 import { finalize, first, map } from "rxjs/operators";
 import { KeyValue } from "@angular/common";
 import { ModuleService } from "./module.service";
+import { WeaponService } from "./weapon.service";
+import { AsteroidService } from "./asteroid.service";
 
 @Component({
   selector: "app-root",
@@ -21,6 +23,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private storageService: StorageService,
     private equipmentService: EquipmentService,
     private moduleService: ModuleService,
+    private weaponService: WeaponService,
+    private asteroidService: AsteroidService,
     private logService: LogService
   ) {}
 
@@ -44,6 +48,18 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.moduleService.modules;
   }
 
+  get asteroidHitChance(){
+    return this.weaponService.asteroidHitChance;
+  }
+
+  get asteroidSpawnChance() {
+    return this.asteroidService.asteroidSpawnChance;
+  }
+
+  get asteroidMaterialYield() {
+    return this.asteroidService.asteroidMaterialYield;
+  }
+  
   getCosts(type: "MODULE" | "EQUIPMENT", id: string): Map<Material, number> {
     if (type === "MODULE") {
       return this.moduleService.getModuleCosts(id);

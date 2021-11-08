@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BuyableService } from "./buyable.service";
+import { FormulaService } from "./formula.service";
 import { MaterialService } from "./material.service";
 
 @Injectable({
@@ -10,7 +11,8 @@ export class ModuleService {
 
   constructor(
     materialService: MaterialService,
-    private buyableService: BuyableService
+    private buyableService: BuyableService,
+    private formulaService: FormulaService
   ) {
     const materialA = materialService.materials.get("A");
     const materialB = materialService.materials.get("B");
@@ -32,7 +34,7 @@ export class ModuleService {
       id: "A",
       name: "Targeting system",
       description: "Improves the ship's targeting system.",
-      effects: ["Asteroid hit: +5%"],
+      effects: ["+ Asteroid hit chance"],
       quantity: 0,
       baseCost: moduleABaseCost,
     });
@@ -42,7 +44,7 @@ export class ModuleService {
       name: "Navigation AI",
       description:
         "Improves the AI responsible for routing the travel path with more asteroids to shoot.",
-      effects: ["Asteroid chance: +5%", "Asteroid quantity: +1"],
+      effects: ["+ Asteroid spawn chance", "Asteroid quantity: +1"],
       quantity: 0,
       baseCost: moduleBBaseCost,
     });
@@ -65,14 +67,10 @@ export class ModuleService {
     return this.buyableService.getCosts(id, this._modules);
   }
 
-  getAsteroidChanceModifier(): number {
+  getAsteroidChanceModifier(baseChance: number): number {
     const navAi = this._modules.get("B");
     const quantity = navAi!.quantity;
-    if (quantity > 0) {
-      return 1 + quantity * 0.05;
-    } else {
-      return 1;
-    }
+    return this.formulaService.calculateDiminishedReturn(baseChance, baseChance + 0.05, 0.5, quantity);
   }
 
   getAsteroidQuantityModifier(): number {
@@ -80,14 +78,10 @@ export class ModuleService {
     return navAi!.quantity;
   }
 
-  getAsteroidHitModifier(): number {
+  getAsteroidHitModifier(baseChance: number): number {
     const targetingSys = this._modules.get("A");
     const quantity = targetingSys!.quantity;
-    if (quantity > 0) {
-      return 1 + quantity * 0.05;
-    } else {
-      return 1;
-    }
+    return this.formulaService.calculateDiminishedReturn(baseChance, baseChance + 0.05, 1, quantity);
   }
 
   getRandomMaterialType() {

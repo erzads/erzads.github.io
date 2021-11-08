@@ -11,11 +11,13 @@ import { WeaponService } from "./weapon.service";
   providedIn: "root",
 })
 export class GameService {
-  subscription: Subscription | null = null;
+  subscription: Subscription = new Subscription();
 
-  private _loopCountBeforeSave = 0;
+  private _shouldSave = false;
 
   private _distance = 0;
+
+  private MAX_OFFLINE_TIME_PRODUCTION = 12 * 60 * 60 * 1000; // 12 hours
 
   constructor(
     private storageService: StorageService,
@@ -30,24 +32,32 @@ export class GameService {
     const savedGameState = this.saveStateService.loadGameState();
     this._distance = savedGameState?.distance || this._distance;
 
-    const source = interval(1000);
-    let lastLoopTime = savedGameState?.lastLoopTime || new Date().getTime();
-    this.subscription = source.subscribe((val) => {
+    let lastLoopTime = new Date().getTime();
+    if (savedGameState?.lastLoopTime) {
+      const elapsedTime = lastLoopTime - savedGameState.lastLoopTime;
+      if (elapsedTime > this.MAX_OFFLINE_TIME_PRODUCTION) {
+        lastLoopTime = lastLoopTime - this.MAX_OFFLINE_TIME_PRODUCTION;
+      } else {
+        lastLoopTime = savedGameState.lastLoopTime;
+      }
+    }
+    this.subscription.add(interval(1000).subscribe(() => {
       let now = new Date().getTime();
       this.loop(now - lastLoopTime);
       lastLoopTime = now;
-    });
+    }));
+
+    this.subscription.add(interval(5000).subscribe(() => {
+      this._shouldSave = true;
+    }));
   }
 
   loop(elapsedTime: number) {
     while (elapsedTime > 999) {
       elapsedTime -= 1000; // one game loop every second
 
-      if (elapsedTime < 2000) {
-        this._loopCountBeforeSave++;
-      }
-      if (this._loopCountBeforeSave >= 30) {
-        this._loopCountBeforeSave = 0;
+      if (this._shouldSave) {
+        this._shouldSave =  false;
         this.saveStateService.saveGameState(this._distance);
       }
 
