@@ -1,18 +1,19 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { EquipmentService } from "./equipment.service";
-import { GameService } from "./game.service";
-import { LogService } from "./log.service";
-import { StorageService } from "./storage.service";
+import { EquipmentService } from "./services/equipment.service";
+import { GameService } from "./services/game.service";
+import { LogService } from "./services/log.service";
+import { StorageService } from "./services/storage.service";
 import { finalize, first, map } from "rxjs/operators";
 import { KeyValue } from "@angular/common";
-import { ModuleService } from "./module.service";
-import { WeaponService } from "./weapon.service";
-import { AsteroidService } from "./asteroid.service";
+import { ModuleService } from "./services/module.service";
+import { WeaponService } from "./services/weapon.service";
+import { AsteroidService } from "./services/asteroid.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog } from "@angular/material/dialog";
 import { ClearSavedDataDialogComponent } from "./dialogs/clear-saved-data-dialog/clear-saved-data-dialog.component";
-import { SaveStateService } from "./save-state.service";
+import { SaveStateService } from "./services/save-state.service";
+import { TravelService } from "./services/travel.service";
 
 @Component({
   selector: "app-root",
@@ -29,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private moduleService: ModuleService,
     private weaponService: WeaponService,
     private asteroidService: AsteroidService,
+    private travelService: TravelService,
     private saveStateService: SaveStateService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
@@ -65,6 +67,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   get asteroidMaterialYield() {
     return this.asteroidService.asteroidMaterialYield;
+  }
+
+  get travelSpeed() {
+    return this.travelService.calculateTravelDistance();
   }
 
   getCosts(type: "MODULE" | "EQUIPMENT", id: string): Map<Material, number> {

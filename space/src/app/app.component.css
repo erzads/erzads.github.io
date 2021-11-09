@@ -11,11 +11,18 @@
   min-width: 300px;
 }
 
-#logs {
+#logs, #statistics {
   overflow: auto;
 }
 
 #buyables{
   overflow: auto;
-  padding: 10px 0
+}
+
+::ng-deep .mat-tab-label-content {
+  color: #D8E9A8
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar {
+  background-color: #4E9F3D;                     
 }

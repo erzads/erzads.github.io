@@ -31,7 +31,7 @@ export class EquipmentService {
     this._equipments.set("A", {
       id: "A",
       name: "Weaponry",
-      description: "Laser firing cannons.",
+      description: "Laser firing cannons. Used to destroy and extract material from asteroids.",
       effects: [
         "Asteroid material yield: +5%",
       ],
@@ -43,7 +43,7 @@ export class EquipmentService {
       id: "B",
       name: "Thrusters",
       description: "Rocket thrusters.",
-      effects: ["Travel speed: +?"],
+      effects: ["Travel speed: +10%"],
       quantity: 0,
       baseCost: equipBBaseCost,
     });
@@ -81,7 +81,7 @@ export class EquipmentService {
   }
 
   getTravelDistanceModifier(): number {
-    const thrusters = this._equipments.get("C");
+    const thrusters = this._equipments.get("B");
     const quantity = thrusters!.quantity;
     if (quantity > 0) {
       return 1 + quantity * 0.1;

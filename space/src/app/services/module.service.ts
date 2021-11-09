@@ -24,36 +24,39 @@ export class ModuleService {
     const moduleBBaseCost = new Map<Material, number>();
     moduleBBaseCost.set(materialA!, 1200);
     moduleBBaseCost.set(materialB!, 500);
+    moduleBBaseCost.set(materialC!, 100);
 
     const moduleCBaseCost = new Map<Material, number>();
-    moduleCBaseCost.set(materialA!, 100000);
-    moduleCBaseCost.set(materialB!, 25000);
-    moduleCBaseCost.set(materialC!, 500);
+    moduleCBaseCost.set(materialA!, 500);
 
     this._modules.set("A", {
       id: "A",
-      name: "Targeting system",
-      description: "Improves the ship's targeting system.",
-      effects: ["+ Asteroid hit chance"],
+      name: "Targeting",
+      description: "Improves the targeting system.",
+      effects: ["+ Weapon hit chance"],
       quantity: 0,
       baseCost: moduleABaseCost,
     });
 
     this._modules.set("B", {
       id: "B",
-      name: "Navigation AI",
+      name: "Navigation",
       description:
-        "Improves the AI responsible for routing the travel path with more asteroids to shoot.",
-      effects: ["+ Asteroid spawn chance", "Asteroid quantity: +1"],
+        "Improves the navigation system. Calculates the travel path with more asteroids to shoot.",
+      effects: ["+ Asteroid spawn chance", "(x10) Asteroid quantity: +1"],
       quantity: 0,
       baseCost: moduleBBaseCost,
     });
 
     this._modules.set("C", {
       id: "C",
-      name: "Storage",
-      description: "Increases material storage capacity.",
-      effects: ["Bla"],
+      name: "Extraction",
+      description: "Improves the material extraction system.",
+      effects: [
+        "Asteroid material yield: +5%",
+        "(10) Unlocks Belidium",
+        "(20) Unlocks Corilium",
+      ],
       quantity: 0,
       baseCost: moduleCBaseCost,
     });
@@ -68,32 +71,49 @@ export class ModuleService {
   }
 
   getAsteroidChanceModifier(baseChance: number): number {
-    const navAi = this._modules.get("B");
-    const quantity = navAi!.quantity;
-    return this.formulaService.calculateDiminishedReturn(baseChance, baseChance + 0.05, 0.5, quantity);
+    const navSys = this._modules.get("B");
+    const quantity = navSys!.quantity;
+    return this.formulaService.calculateDiminishedReturn(
+      baseChance,
+      baseChance + 0.05,
+      0.5,
+      quantity
+    );
   }
 
   getAsteroidQuantityModifier(): number {
-    const navAi = this._modules.get("B");
-    return navAi!.quantity;
+    const navSys = this._modules.get("B");
+    return navSys!.quantity % 10;
   }
 
   getAsteroidHitModifier(baseChance: number): number {
     const targetingSys = this._modules.get("A");
     const quantity = targetingSys!.quantity;
-    return this.formulaService.calculateDiminishedReturn(baseChance, baseChance + 0.05, 1, quantity);
+    return this.formulaService.calculateDiminishedReturn(
+      baseChance,
+      baseChance + 0.05,
+      1,
+      quantity
+    );
   }
 
   getRandomMaterialType() {
+    const extractionSys = this._modules.get("C");
+    const quantity = extractionSys!.quantity;
+
     const materialTypeWeightedList = [];
     for (let i = 0; i < 5; i++) {
       materialTypeWeightedList.push("A");
     }
-    for (let i = 0; i < 3; i++) {
-      materialTypeWeightedList.push("B");
-    }
-    for (let i = 0; i < 2; i++) {
-      materialTypeWeightedList.push("C");
+    if (quantity >= 10) {
+      for (let i = 0; i < 3; i++) {
+        materialTypeWeightedList.push("B");
+      }
+      if (quantity >= 20) {
+        for (let i = 0; i < 2; i++) {
+          materialTypeWeightedList.push("C");
+        }
+      }
     }
     return materialTypeWeightedList[
       Math.floor(Math.random() * materialTypeWeightedList.length)
@@ -101,7 +121,13 @@ export class ModuleService {
   }
 
   generateMaterialYield(): number {
-    return 1;
+    const extractionSys = this._modules.get("C");
+    const quantity = extractionSys!.quantity;
+    if (quantity > 0) {
+      return 1 + quantity * 0.05;
+    } else {
+      return 1;
+    }
   }
 
   getTravelDistanceModifier(): number {
