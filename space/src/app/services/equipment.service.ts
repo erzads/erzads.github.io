@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BuyableService } from "./buyable.service";
+import { FormulaService } from "./formula.service";
 import { MaterialService } from "./material.service";
 
 @Injectable({
@@ -10,14 +11,15 @@ export class EquipmentService {
 
   constructor(
     materialService: MaterialService,
-    private buyableService: BuyableService
+    private buyableService: BuyableService,
+    private formulaService: FormulaService
   ) {
     const materialA = materialService.materials.get("A");
     const materialB = materialService.materials.get("B");
     const materialC = materialService.materials.get("C");
 
     const equipABaseCost = new Map<Material, number>();
-    equipABaseCost.set(materialA!, 100);
+    equipABaseCost.set(materialA!, 50);
 
     const equipBBaseCost = new Map<Material, number>();
     equipBBaseCost.set(materialA!, 1200);
@@ -31,10 +33,9 @@ export class EquipmentService {
     this._equipments.set("A", {
       id: "A",
       name: "Weaponry",
-      description: "Laser firing cannons. Used to destroy and extract material from asteroids.",
-      effects: [
-        "Asteroid material yield: +5%",
-      ],
+      description:
+        "Laser firing cannons. Used to destroy and extract material from asteroids.",
+      effects: ["Asteroid material yield: +5%", "+ Weapon hit chance"],
       quantity: 0,
       baseCost: equipABaseCost,
     });
@@ -42,8 +43,13 @@ export class EquipmentService {
     this._equipments.set("B", {
       id: "B",
       name: "Thrusters",
-      description: "Rocket thrusters.",
-      effects: ["Travel speed: +10%"],
+      description:
+        "Rocket thrusters. Travel faster. More distant galaxies have more asteroids with more materials on them.",
+      effects: [
+        "Travel speed: +10%",
+        "(x10000 Traveled distance) Asteroid material yield: +5%",
+        "(x10000 Traveled distance) Asteroid spawn chance: +5%",
+      ],
       quantity: 0,
       baseCost: equipBBaseCost,
     });
@@ -68,6 +74,18 @@ export class EquipmentService {
 
   getAsteroidQuantityModifier(): number {
     return 0;
+  }
+
+
+  getAsteroidHitModifier(): number {
+    const weaponry = this._equipments.get("A");
+    const quantity = weaponry!.quantity;
+    return this.formulaService.calculateDiminishedReturn(
+      0,
+      0.01,
+      0.25,
+      quantity
+    );
   }
 
   generateMaterialYield(): number {

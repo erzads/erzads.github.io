@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { interval, Subscription } from "rxjs";
 import { AsteroidService } from "./asteroid.service";
+import { DistanceService } from "./distance.service";
 import { LogService } from "./log.service";
 import { SaveStateService } from "./save-state.service";
 import { StorageService } from "./storage.service";
@@ -15,8 +16,6 @@ export class GameService {
 
   private _shouldSave = false;
 
-  private _distance = 0;
-
   private MAX_OFFLINE_TIME_PRODUCTION = 12 * 60 * 60 * 1000; // 12 hours
 
   constructor(
@@ -25,12 +24,12 @@ export class GameService {
     private weaponService: WeaponService,
     private travelService: TravelService,
     private saveStateService: SaveStateService,
+    private distanceService: DistanceService,
     private logService: LogService
   ) {}
 
   start() {
     const savedGameState = this.saveStateService.loadGameState();
-    this._distance = savedGameState?.distance || this._distance;
 
     let lastLoopTime = new Date().getTime();
     if (savedGameState?.lastLoopTime) {
@@ -58,10 +57,10 @@ export class GameService {
 
       if (this._shouldSave) {
         this._shouldSave =  false;
-        this.saveStateService.saveGameState(this._distance);
+        this.saveStateService.saveGameState();
       }
 
-      this._distance += this.travelService.calculateTravelDistance();
+      this.distanceService.add(this.travelService.calculateTravelDistance());
       const asteroids = this.asteroidService.generateAsteroids();
       if (asteroids?.length > 0) {
         this.logService.logInfo(
@@ -82,7 +81,7 @@ export class GameService {
   }
 
   get distance() {
-    return this._distance;
+    return this.distanceService.distance;
   }
 
   save() {

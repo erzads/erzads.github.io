@@ -6,9 +6,9 @@ import { ModifierService } from "./modifier.service";
   providedIn: "root",
 })
 export class AsteroidService {
-  private BASE_CHANCE = 0.1;
+  private BASE_CHANCE = 0.15;
   private BASE_ASTEROID_QUANTITY = 1;
-  private BASE_MATERIAL_YIELD = 1;
+  private BASE_MATERIAL_YIELD = 0.5;
 
   constructor(
     private modifierService: ModifierService,
@@ -16,7 +16,7 @@ export class AsteroidService {
   ) {}
 
   get asteroidSpawnChance() {
-    return this.modifierService.getAsteroidChanceModifier(this.BASE_CHANCE);
+    return Math.min(1, this.modifierService.getAsteroidChanceModifier(this.BASE_CHANCE));
   }
 
   get asteroidMaterialYield() {

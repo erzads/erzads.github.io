@@ -14,7 +14,7 @@ export class WeaponService {
   ) {}
 
   get asteroidHitChance() {
-    return this.modifierService.getAsteroidHitModifier(this.BASE_CHANCE);
+    return this.BASE_CHANCE + this.modifierService.getAsteroidHitModifier();
   }
 
   shoot(asteroids: Asteroid[]): Asteroid[] {

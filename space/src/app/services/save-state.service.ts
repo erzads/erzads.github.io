@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { of } from "rxjs";
+import { DistanceService } from "./distance.service";
 import { EquipmentService } from "./equipment.service";
 import { LogService } from "./log.service";
 import { MaterialService } from "./material.service";
@@ -15,6 +16,7 @@ export class SaveStateService {
     private equipmentService: EquipmentService,
     private moduleService: ModuleService,
     private materialService: MaterialService,
+    private distanceService: DistanceService,
     private logService: LogService
   ) {}
 
@@ -22,6 +24,7 @@ export class SaveStateService {
     const item = localStorage.getItem("space-incremental");
     if (item) {
       const gameState: GameState = JSON.parse(atob(item));
+      this.distanceService.distance = gameState.distance;
       this._loadStorageMaterials(gameState);
       this._loadEquipments(gameState);
       this._loadModules(gameState);
@@ -67,9 +70,9 @@ export class SaveStateService {
     }
   }
 
-  public saveGameState(distance: number) {
+  public saveGameState() {
     const gameState: GameState = {
-      distance: distance,
+      distance: this.distanceService.distance,
       lastLoopTime: new Date().getTime(),
       storageMaterials: Array.from(this.storageService.materials.value).map(
         ([key, value]) => ({ key: key.type, value: value })

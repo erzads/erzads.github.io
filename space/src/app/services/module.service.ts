@@ -22,12 +22,12 @@ export class ModuleService {
     moduleABaseCost.set(materialA!, 100);
 
     const moduleBBaseCost = new Map<Material, number>();
-    moduleBBaseCost.set(materialA!, 1200);
-    moduleBBaseCost.set(materialB!, 500);
-    moduleBBaseCost.set(materialC!, 100);
+    moduleBBaseCost.set(materialA!, 500);
 
     const moduleCBaseCost = new Map<Material, number>();
-    moduleCBaseCost.set(materialA!, 500);
+    moduleCBaseCost.set(materialA!, 1200);
+    moduleCBaseCost.set(materialB!, 500);
+    moduleCBaseCost.set(materialC!, 100);
 
     this._modules.set("A", {
       id: "A",
@@ -40,16 +40,6 @@ export class ModuleService {
 
     this._modules.set("B", {
       id: "B",
-      name: "Navigation",
-      description:
-        "Improves the navigation system. Calculates the travel path with more asteroids to shoot.",
-      effects: ["+ Asteroid spawn chance", "(x10) Asteroid quantity: +1"],
-      quantity: 0,
-      baseCost: moduleBBaseCost,
-    });
-
-    this._modules.set("C", {
-      id: "C",
       name: "Extraction",
       description: "Improves the material extraction system.",
       effects: [
@@ -57,6 +47,16 @@ export class ModuleService {
         "(10) Unlocks Belidium",
         "(20) Unlocks Corilium",
       ],
+      quantity: 0,
+      baseCost: moduleBBaseCost,
+    });
+
+    this._modules.set("C", {
+      id: "C",
+      name: "Navigation",
+      description:
+        "Improves the navigation system. Calculates the travel path with more asteroids to shoot.",
+      effects: ["+ Asteroid spawn chance", "(x10) Asteroid quantity: +1"],
       quantity: 0,
       baseCost: moduleCBaseCost,
     });
@@ -71,34 +71,34 @@ export class ModuleService {
   }
 
   getAsteroidChanceModifier(baseChance: number): number {
-    const navSys = this._modules.get("B");
+    const navSys = this._modules.get("C");
     const quantity = navSys!.quantity;
     return this.formulaService.calculateDiminishedReturn(
       baseChance,
-      baseChance + 0.05,
+      baseChance + 0.03,
       0.5,
       quantity
     );
   }
 
   getAsteroidQuantityModifier(): number {
-    const navSys = this._modules.get("B");
+    const navSys = this._modules.get("C");
     return navSys!.quantity % 10;
   }
 
-  getAsteroidHitModifier(baseChance: number): number {
+  getAsteroidHitModifier(): number {
     const targetingSys = this._modules.get("A");
     const quantity = targetingSys!.quantity;
     return this.formulaService.calculateDiminishedReturn(
-      baseChance,
-      baseChance + 0.05,
-      1,
+      0,
+      0.01,
+      0.25,
       quantity
     );
   }
 
   getRandomMaterialType() {
-    const extractionSys = this._modules.get("C");
+    const extractionSys = this._modules.get("B");
     const quantity = extractionSys!.quantity;
 
     const materialTypeWeightedList = [];
@@ -121,7 +121,7 @@ export class ModuleService {
   }
 
   generateMaterialYield(): number {
-    const extractionSys = this._modules.get("C");
+    const extractionSys = this._modules.get("B");
     const quantity = extractionSys!.quantity;
     if (quantity > 0) {
       return 1 + quantity * 0.05;
